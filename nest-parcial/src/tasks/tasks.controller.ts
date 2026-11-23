@@ -5,12 +5,16 @@ import {
   Body,
   Param,
   NotFoundException,
+  UseGuards
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task, TaskDocument } from './schemas/task.schema';
 import { User, UserDocument } from '../users/schemas/user.schema';
 import { TasksService } from './tasks.service';
+import { CreateTaskDto } from './create-task.dto';
+import { AuthGuard } from './auth.guard'; 
+
 
 @Controller('tasks')
 export class TasksController {
@@ -21,7 +25,8 @@ export class TasksController {
   ) {}
 
   @Post()
-  async create(@Body() payload: any) {
+  @UseGuards(AuthGuard)
+  async create(@Body() payload: CreateTaskDto) {
     const user = await this.userModel.findById(payload.userId);
     if (!user) {
       throw new NotFoundException(

@@ -63,3 +63,9 @@ API REST en NestJS y Mongoose para la gestión de **Usuarios (`/users`)** y **Ta
 | `POST` | `/tasks` | Restringido (`Authorization: admin-secret-token`) | Crear una tarea asociada a un usuario |
 
 También puedes importar `nest-parcial.postman_collection.json` en Postman o utilizar `requests.http` con la extensión REST Client de VS Code para probar manualmente los endpoints.
+
+Evidencia:
+Para el caso 1 se creó un archivo con el DTO que tenga únicamente los campos necesarios para hacer una petición de Post de algún task, también y en el controlador para el método Post se hace que reciba payload: CreateTaskDto en vez de any para que solo reciba el contrato que definimos. Finalmente se agregó el Validation Pipe en main con lista blanca para asegurarse de que si llegara a aparecer más campos dentro de la petición Post de un task, estos campos puedan ser descartados en silencio. 
+Para el caso 2, se editó en users module para que exportara su servicio y posteriormente en task module ya no se importa el schema sino que se importa UsersModule.
+Para el caso 3, lo que se hizo fue quitar esa validación de autorización de middleware, y crear un archivo nuevo de auth.guard que se ocupe de esta validación para ser puesto luego como decorador para el método post en el controlador para qué unicamente se requiera la validación solo para este método. 
+Para el caso 4, lo que se hizo fue crear el método create en tasks.service para que no falle los tests de únicamente task y además se define en el constructor el servicio de Users. 

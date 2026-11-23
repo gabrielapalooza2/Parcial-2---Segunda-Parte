@@ -1,13 +1,24 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Task, TaskDocument } from './schemas/task.schema';
+import { Task } from './schemas/task.schema';
+import { UsersService } from '../users/users.service';
+import { CreateTaskDto } from './create-task.dto';
 
 @Injectable()
 export class TasksService {
   constructor(
-    @InjectModel(Task.name) private readonly taskModel: Model<TaskDocument>,
+    @InjectModel(Task.name) private taskModel: Model<Task>,
+    private usersService: UsersService, 
   ) {}
+
+  async create(data: CreateTaskDto){
+    if (data.userId) {
+      await this.usersService.findById(data.userId);
+
+    }
+    return this.taskModel.create(data); 
+  }
 
   async findAll(): Promise<Task[]> {
     return this.taskModel.find().exec();
@@ -21,3 +32,5 @@ export class TasksService {
     return task;
   }
 }
+
+
